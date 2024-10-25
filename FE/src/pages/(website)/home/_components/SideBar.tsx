@@ -5,7 +5,7 @@ import Delete from '@/assets/icons/delete.svg'
 import { Menu } from 'lucide-react'
 
 
-const SideBar = ({ openMenu, handleOpenMenu }: { openMenu: string, handleOpenMenu: any }) => {
+const SideBar = ({ openMenu, handleOpenMenu }: { openMenu: string, handleOpenMenu: (state: string) => void }) => {
     return (
         <div className={`Side-bar bg-[#202123] text-white transition-all duration-200 max-md:absolute max-md:w-[45%] select-none ${openMenu === 'open' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
             <div className={`flex md:hidden p-4`}>
