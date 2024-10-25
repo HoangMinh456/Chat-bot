@@ -23,19 +23,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        light: {
-          50: "#f1f9fa",
-          100: "#dceef1",
-          200: "#bddfe4",
-          300: "#90c7d0",
-          400: "#64abb9",
-          500: "#408a9a",
-          600: "#387282",
-          700: "#325d6c",
-          800: "#304f5a",
-          900: "#2c434d",
-          950: "#192b33",
-        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -91,5 +78,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('tailwind-scrollbar'),],
 };
