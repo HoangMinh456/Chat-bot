@@ -1,22 +1,29 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import SideBar from './_components/SideBar'
+
+import { Menu } from 'lucide-react';
+import { useState } from 'react';
+import SideBar from './_components/SideBar';
 
 type Props = {}
 
 const Home = (props: Props) => {
+    const [openMenu, setOpenMenu] = useState<string>('close')
+    console.log(openMenu)
+    const handleOpenMenu = (item: string) => {
+        setOpenMenu(item)
+    }
     return (
         <>
-            <div className='flex gap-3'>
-                <div>
-                    <SideBar />
+            <div className='grid grid-cols-1 transition-all duration-200 max-md:relative md:grid-cols-[minmax(auto,252px)_auto] lg:grid-cols-[minmax(auto,352px)_auto]'>
+                <div className={`flex md:hidden p-4`}>
+                    <div className='cursor-pointer' onClick={openMenu === 'open' ? () => handleOpenMenu('close') : () => handleOpenMenu('open')}>
+                        <Menu size={32} />
+                    </div>
                 </div>
-                <div>
-                    <h1 className='text-red-500 underline text-3xl font-bold'>
-                        Hello
-                    </h1>
+                <SideBar openMenu={openMenu} handleOpenMenu={handleOpenMenu} />
+                <div className='Main-chat grid justify-center items-center'>
+                    main
                 </div>
-            </div>
+            </div >
 
         </>
     )
