@@ -13,7 +13,7 @@ const SideBar = ({ openMenu, handleOpenMenu }: { openMenu: string, handleOpenMen
                     <Menu size={32} />
                 </div>
             </div>
-            <div className='All-chat flex flex-col gap-y-8 p-4 h-screen overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-[#444654] scrollbar-track-[#202123]'>
+            <div className='All-chat flex flex-col gap-y-8 p-4 h-screen overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#444654] scrollbar-track-[#202123]'>
                 <div>
                     <div className='New-chat flex gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer md:text-[16px] text-[12px]'>
                         <div>
