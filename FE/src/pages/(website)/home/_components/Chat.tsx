@@ -18,7 +18,7 @@ const ChatComponent = () => {
           </div>
           {/* Input */}
           <div className="bg-[#343541] p-4 flex w-full justify-center">
-            <div className="relative bg-[#40414E] flex-grow rounded-full p-2">
+            <div className="relative bg-[#40414E] rounded-full p-2" style={{ width: '50%' }}> {/* Chỉnh sửa tại đây */}
               <input type="text" className="w-full p-2 rounded-full bg-transparent placeholder-gray-400 outline-none text-white" placeholder="Enter a prompt here" />
               <button className="absolute right-0 top-0 m-3 text-white p-1 rounded-full border-none">
                 <SendHorizonal size={24} />
