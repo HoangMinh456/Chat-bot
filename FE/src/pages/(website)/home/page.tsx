@@ -2,6 +2,7 @@
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import SideBar from './_components/SideBar';
+import ChatComponent from './_components/Chat';
 
 type Props = {}
 
@@ -20,9 +21,10 @@ const Home = (props: Props) => {
                     </div>
                 </div>
                 <SideBar openMenu={openMenu} handleOpenMenu={handleOpenMenu} />
-                <div className='Main-chat grid justify-center items-center'>
+                <ChatComponent/>
+                {/* <div className='Main-chat grid justify-center items-center'>
                     main
-                </div>
+                </div> */}
             </div >
 
         </>
