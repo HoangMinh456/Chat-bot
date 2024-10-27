@@ -1,7 +1,7 @@
 import avatar from '@/assets/images/avatar.png'
 import { SendHorizonal } from 'lucide-react';
 
-const ChatComponent=()=> {
+const ChatComponent = () => {
   return (
     <div className="h-screen bg-[#343541] flex flex-col">
       {/* Header */}
@@ -13,12 +13,12 @@ const ChatComponent=()=> {
       {/* Message List */}
       <div className="flex flex-col items-center justify-center flex-grow p-4">
         <div className="flex flex-col items-center">
-        <div className="text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-orange-500 p-3 rounded-lg text-4xl md:text-8xl text-center" style={{maxWidth: '90%' }}>
+        <div className="text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-orange-500 p-3 rounded-lg text-4xl md:text-8xl text-center" style={{ maxWidth: '90%' }}>
           Chào bạn, bạn muốn có cuộc trò chuyện gì?
         </div>
           {/* Input */}
           <div className="bg-[#343541] p-4 flex w-full justify-center">
-            <div className="relative bg-[#40414E] flex-grow rounded-full p-2">
+            <div className="relative bg-[#40414E] rounded-full p-2" style={{ width: '50%' }}> {/* Chỉnh sửa tại đây */}
               <input type="text" className="w-full p-2 rounded-full bg-transparent placeholder-gray-400 outline-none text-white" placeholder="Enter a prompt here" />
               <button className="absolute right-0 top-0 m-3 text-white p-1 rounded-full border-none">
                 <SendHorizonal size={24} />
