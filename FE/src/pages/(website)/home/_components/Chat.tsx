@@ -38,9 +38,9 @@ const ChatComponent = ({ openMenu, setOpenMenu, handleOpenMenu }: { openMenu: st
   }, [openMenu])
 
   return (
-    <div id='Screen' className="h-screen bg-[#343541] flex flex-col select-none">
+    <div id='Screen' className="h-screen bg-[#343541] flex flex-col">
       {/* Header */}
-      <div className={`flex max-md:relative justify-between items-center text-white p-4 bg-[#343541] z-0`}>
+      <div className={`flex max-md:relative justify-between items-center text-white p-4 bg-[#343541] z-0 select-none`}>
         <div className='cursor-pointer md:hidden' onClick={openMenu === 'open' ? () => handleOpenMenu('close') : () => handleOpenMenu('open')}>
           <Menu size={32} />
         </div>
@@ -54,13 +54,13 @@ const ChatComponent = ({ openMenu, setOpenMenu, handleOpenMenu }: { openMenu: st
       </div>
 
       {/* Message List */}
-      <div className="flex flex-col items-center justify-center flex-grow">
+      <div className="flex flex-col items-center justify-center h-screen">
         <div className="text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-orange-500 p-3 rounded-lg text-4xl lg:text-8xl text-center">
           Chào bạn, bạn muốn có cuộc trò chuyện gì?
         </div>
         <div className='grid grid-cols-[minmax(auto,450px)] md:grid-cols-[minmax(auto,768px)] p-4'>
-          <div className="bg-[#343541] p-4 flex w-full justify-center items-center">
-            <div className="bg-[#40414E] rounded-[26px] p-2 w-full flex items-end justify-between">
+          <div className="bg-[#343541] flex w-full justify-center items-center">
+            <div className="Promt-chat bg-[#40414E] rounded-[26px] p-2 w-full flex items-end justify-between">
               <div className="flex items-center">
                 <img className="w-8 h-8 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
               </div>
