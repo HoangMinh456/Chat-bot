@@ -3,9 +3,27 @@ import Message from '@/assets/icons/message.svg'
 import Pen from '@/assets/icons/pen.svg'
 import Delete from '@/assets/icons/delete.svg'
 import { Menu } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { AppContext } from '@/components/contexts/AppContext'
 
 
-const SideBar = ({ openMenu, handleOpenMenu }: { openMenu: string, handleOpenMenu: (state: string) => void }) => {
+const SideBar = () => {
+    const { openMenu, handleOpenMenu }: any = useContext(AppContext)
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['GET_CHAT_SIDE_BAR'],
+        queryFn: async () => {
+            const { data } = await axios.get('http://localhost:3000/ChatManager');
+            return data;
+        }
+    })
+
+    if (isLoading) return <div>Loading...</div>
+    if (isError) return <div>Error...</div>
+
     return (
         <div className={`Side-bar bg-[#202123] text-white transition-all duration-200 transform max-md:absolute max-md:w-[45%] select-none z-10 ${openMenu === 'open' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
             <div className={`flex md:hidden p-4`}>
@@ -14,121 +32,50 @@ const SideBar = ({ openMenu, handleOpenMenu }: { openMenu: string, handleOpenMen
                 </div>
             </div>
             <div className='All-chat flex flex-col gap-y-8 p-4 h-screen overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#444654] scrollbar-track-[#202123]'>
-                <div>
+                <Link to={`/`}>
                     <div className='New-chat flex gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer md:text-[16px] text-[12px]'>
                         <div>
                             <img className='max-sm:w-2' src={Icon_Plus} alt="icon-plus" />
                         </div>
                         <span className='truncate text-[12px] md:text-[16px]'>New chat</span>
                     </div>
-                </div>
-                <div className='flex flex-col gap-y-4'>
+                </Link>
+                {data.map((item: any) => {
+                    // console.log(item)
+                    return (
+                        <div key={item.id} className='flex flex-col gap-y-4'>
+                            <span className='px-4 text-sm'>{item.createdAt}</span>
+                            {item.chatBoxes.map((chat: any) => {
+                                // console.log(chat)
+                                return (
+                                    <Link key={chat.id} to={`/chat/${chat.chatBoxId}`}>
+                                        <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
+                                            <div className='flex gap-4'>
+                                                <img className='max-sm:w-2' src={Message} alt="" />
+                                                <span className='truncate flex-grow text-[12px] md:text-[16px]'>{chat.name}</span>
+                                                <img className='max-sm:w-2' src={Pen} alt="" />
+                                                <img className='max-sm:w-2' src={Delete} alt="" />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )
+                            })}
+                        </div>
+                    )
+                })}
+                {/* <div className='flex flex-col gap-y-4'>
                     <span className='px-4 text-sm'>Hôm nay</span>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
+                    <Link to={`/chat/`}>
+                        <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
+                            <div className='flex gap-4'>
+                                <img className='max-sm:w-2' src={Message} alt="" />
+                                <span className='truncate flex-grow text-[12px] md:text-[16px]'></span>
+                                <img className='max-sm:w-2' src={Pen} alt="" />
+                                <img className='max-sm:w-2' src={Delete} alt="" />
+                            </div>
                         </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className='flex flex-col gap-y-4'>
-                    <span className='px-4 text-sm'>1 ngày trước</span>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className='flex flex-col gap-y-4'>
-                    <span className='px-4 text-sm'>3 ngày trước</span>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot def</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                    <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                        <div className='flex gap-4'>
-                            <img className='max-sm:w-2' src={Message} alt="" />
-                            <span className='truncate flex-grow text-[12px] md:text-[16px]'>Chatbot definition explan ed</span>
-                            <img className='max-sm:w-2' src={Pen} alt="" />
-                            <img className='max-sm:w-2' src={Delete} alt="" />
-                        </div>
-                    </div>
-                </div>
+                    </Link>
+                </div> */}
             </div>
         </div>
     )

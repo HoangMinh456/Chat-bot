@@ -22,6 +22,19 @@ module.exports = {
       },
     },
     extend: {
+      animation: {
+        typing: 'typing 3s steps(30, end), blink 0.7s step-end infinite',
+      },
+      keyframes: {
+        typing: {
+          'from': { width: '0' },
+          'to': { width: '100%' },
+        },
+        blink: {
+          '0%, 100%': { 'border-color': 'transparent' },
+          '50%': { 'border-color': 'black' },
+        },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
