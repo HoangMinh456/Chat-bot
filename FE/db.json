@@ -9,133 +9,64 @@
             "createdAt": "2024-10-01T12:30:00Z"
         }
     ],
-    "ChatManager": [
+    "ChatBot": [
         {
-            "id": "6ga8913ri19",
-            "userId": "1",
-            "chatBoxes": [
-                {
-                    "id": "3gv45jhv3453h5b3h5",
-                    "chatBoxId": "12",
-                    "name": "Project Chat with AI",
-                    "createdAt": "2024-10-03"
-                },
-                {
-                    "id": "932bsdbk982735bgs",
-                    "chatBoxId": "14",
-                    "name": "Casual Chat",
-                    "createdAt": "2024-10-03"
-                }
+            "id": "1",
+            "title": "AI Chatbot",
+            "createdAt": "2024-10-31T12:30:00Z",
+            "id_mess": [
+                "1",
+                "2",
+                "3"
             ],
-            "createdAt": "2024-10-03T12:30:00Z"
-        }
-    ],
-    "ChatBox": [
-        {
-            "id": "12",
-            "userId": "1",
-            "name": "Project Chat with AI",
-            "messages": [
-                {
-                    "sender": "user",
-                    "message": "Hey AI, I need help with my project.",
-                    "timestamp": "2024-10-03T09:31:00Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Sure, I'd be happy to help. What do you need assistance with?",
-                    "timestamp": "2024-10-03T09:32:30Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "I’m struggling with machine learning concepts.",
-                    "timestamp": "2024-10-03T09:33:15Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "No problem! Let's start with the basics. Are you familiar with supervised and unsupervised learning?",
-                    "timestamp": "2024-10-03T09:34:05Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "I know a little, but can you explain the main difference?",
-                    "timestamp": "2024-10-03T09:35:20Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "In supervised learning, the model learns from labeled data, while in unsupervised learning, it identifies patterns in data without labels.",
-                    "timestamp": "2024-10-03T09:36:45Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "That makes sense. Can we go deeper into examples?",
-                    "timestamp": "2024-10-03T09:38:10Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Of course! In supervised learning, think of spam detection, where emails are labeled as spam or not. In unsupervised learning, clustering can group similar users based on behavior.",
-                    "timestamp": "2024-10-03T09:39:30Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "Good morning AI, let’s continue from yesterday.",
-                    "timestamp": "2024-10-04T09:00:00Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Good morning! Ready when you are. Any specific topic you’d like to dive into?",
-                    "timestamp": "2024-10-04T09:01:30Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "I’m curious about deep learning now.",
-                    "timestamp": "2024-10-04T09:02:15Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Deep learning is a subset of machine learning that uses neural networks to simulate human-like learning processes. Would you like an example?",
-                    "timestamp": "2024-10-04T09:03:20Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "Yes, that would be helpful!",
-                    "timestamp": "2024-10-04T09:04:10Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Think of image recognition. A deep learning model can distinguish between a cat and a dog by processing many images of each and learning unique features over time.",
-                    "timestamp": "2024-10-04T09:05:50Z"
-                },
-                {
-                    "sender": "user",
-                    "message": "That’s really interesting. Can you suggest some resources to learn more?",
-                    "timestamp": "2024-10-04T09:07:05Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Sure! Try 'Deep Learning' by Ian Goodfellow or check out online courses like Andrew Ng's deep learning specialization.",
-                    "timestamp": "2024-10-04T09:08:45Z"
-                }
-            ],
-            "createdAt": "2024-10-03T09:30:00Z"
+            "id_user": "1"
         },
         {
-            "id": "14",
-            "userId": "1",
-            "name": "Casual Chat",
-            "messages": [
-                {
-                    "sender": "user",
-                    "message": "Hello AI, hows it going?",
-                    "timestamp": "2024-10-04T12:46:00Z"
-                },
-                {
-                    "sender": "ai",
-                    "message": "Im here, ready to chat! What’s on your mind?",
-                    "timestamp": "2024-10-04T12:47:30Z"
-                }
-            ],
-            "createdAt": "2024-10-04T12:45:00Z"
+            "title": "awdawdad",
+            "createdAt": "2024-11-04T09:46:53.947Z",
+            "id_mess": [],
+            "id_user": 1,
+            "id": "b9LRppm"
+        }
+    ],
+    "MessChat": [
+        {
+            "id_messChat": "1",
+            "content": "hello",
+            "createdAt": "2024-11-04 12:33:00",
+            "id_botResult": "1",
+            "id_chatBot": "1"
+        },
+        {
+            "id_messChat": "2",
+            "content": "Im so great now",
+            "createdAt": "2024-11-04 12:32:00",
+            "id_botResult": "2",
+            "id_chatBot": "1"
+        },
+        {
+            "id_messChat": "3",
+            "content": "Im so bad now",
+            "createdAt": "2024-11-04 12:30:00",
+            "id_botResult": "3",
+            "id_chatBot": "1"
+        }
+    ],
+    "BotResult": [
+        {
+            "id_botResult": "1",
+            "content": 0,
+            "createdAt": "2024-11-04 12:33:00"
+        },
+        {
+            "id_botResult": "2",
+            "content": 0,
+            "createdAt": "2024-11-04 12:32:10"
+        },
+        {
+            "id_botResult": "3",
+            "content": 1,
+            "createdAt": "2024-11-04 12:31:10"
         }
     ]
 }

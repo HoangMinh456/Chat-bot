@@ -2,7 +2,7 @@ import Login from "./_componnents/Login";
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="m-auto">
       <Login />
     </div>
   );

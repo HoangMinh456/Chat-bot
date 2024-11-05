@@ -76,11 +76,10 @@ const SignupForm = () => {
             />
             <label
               htmlFor="username"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                usernameActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${usernameActive
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-              }`}
+                }`}
             >
               Username
             </label>
@@ -97,11 +96,10 @@ const SignupForm = () => {
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                emailActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${emailActive
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-              }`}
+                }`}
             >
               Email address
             </label>
@@ -119,11 +117,10 @@ const SignupForm = () => {
             />
             <label
               htmlFor="password"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                passwordActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${passwordActive
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-              }`}
+                }`}
             >
               Password
             </label>

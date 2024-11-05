@@ -1,26 +1,45 @@
 import avatar from '@/assets/images/avatar.png'
 import Logo_AI from '@/assets/img/Logo-AI.png'
 import { AppContext } from '@/components/contexts/AppContext';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Menu } from 'lucide-react';
 import { SendHorizonal } from 'lucide-react';
 import { useContext, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 const Chat2Component = () => {
     const { openMenu, setOpenMenu, handleOpenMenu }: any = useContext(AppContext)
     const { id } = useParams()
-
+    const { register, handleSubmit, reset } = useForm()
+    const queryClient = useQueryClient()
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['GET_CHAT_AI', id],
+        queryKey: ['GET_CHAT_BOT', id],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:3000/ChatBox/${id}`);
+            const { data } = await axios.get(`http://127.0.0.1:5000/chatbox?chatbot_id=${id}`);
             return data;
         }
     })
 
-    // console.log(data)
+    const createMessChat = useMutation({
+        mutationFn: async (item: any) => {
+            const data = await axios.post(`http://127.0.0.1:5000/api/predict?chatbot_id=${item.id_chatBot}`, { text: item.content });
+            return data;
+        }, onError: (error) => {
+            console.log(error)
+        }, onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['GET_CHAT_BOT', id] })
+        }
+    })
+
+    const onSubmit = async (data: any) => {
+        if (!data.content || data.content.trim() === '') return
+        // console.log(data.content)
+
+        await createMessChat.mutateAsync({ content: data.content, id_chatBot: id })
+        reset()
+    }
 
     const closeMenu = () => {
         if (openMenu === 'open') {
@@ -54,7 +73,7 @@ const Chat2Component = () => {
 
     }, [openMenu])
 
-    if (isLoading) return <div>Loading...</div>
+    if (isLoading) return <div className='h-screen bg-[#343541]'>Loading...</div>
     if (isError) return <div>Error...</div>
 
     return (
@@ -64,12 +83,12 @@ const Chat2Component = () => {
                 <div className='cursor-pointer md:hidden' onClick={openMenu === 'open' ? () => handleOpenMenu('close') : () => handleOpenMenu('open')}>
                     <Menu size={32} />
                 </div>
-                {/* <div className='max-md:absolute top-1/2 left-1/2 transform max-md:-translate-x-1/2 max-md:-translate-y-1/2'>
+                <div className='max-md:absolute top-1/2 left-1/2 transform max-md:-translate-x-1/2 max-md:-translate-y-1/2'>
                     <span>Chat-bot</span>
-                </div> */}
+                </div>
                 <div className="flex items-center justify-end">
                     <img className="w-8 h-8 md:w-12 md:h-12 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
-                    <span className="text-sm md:text-base font-bold text-white">User 1</span>
+                    {/* <span className="text-sm md:text-base font-bold text-white">User 1</span> */}
                 </div>
             </div>
 
@@ -78,40 +97,39 @@ const Chat2Component = () => {
                 {/* <div className="text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-orange-500 p-3 rounded-lg text-4xl lg:text-8xl text-center">
                     Chào bạn, bạn muốn có cuộc trò chuyện gì?
                 </div> */}
-                <div className='Main-chat grid gap-y-6 w-full overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
-                    {data.messages.map((item: any) => (
-                        item.sender === 'user'
-                            ?
-                            <div className='Human-chat p-6 flex justify-center items-center'>
-                                <div className='Content-chat flex items-start flex-row-reverse gap-4 w-full max-w-[450px] md:max-w-[768px]'>
-                                    <div className="flex items-center">
-                                        <img className="w-8 h-8 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
-                                    </div>
-                                    <div className='w-full max-w-[450px] pt-1 md:max-w-[768px] text-right'>
-                                        <span className='text-white'>
-                                            {item.message}
-                                        </span>
+                <div className='Main-chat relative grid gap-y-6 w-full overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
+                    {data.messages.map((item: any, index: number) => {
+                        return (
+                            <>
+                                <div key={index} className='Human-chat p-6 flex justify-center items-center'>
+                                    <div className='Content-chat flex items-start flex-row-reverse gap-4 w-full max-w-[450px] md:max-w-[768px]'>
+                                        <div className="flex items-center">
+                                            <img className="w-8 h-8 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
+                                        </div>
+                                        <div className='w-full max-w-[450px] pt-1 md:max-w-[768px] text-right'>
+                                            <span className='text-white'>
+                                                {item.noiDung}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            : item.sender === 'ai'
-                                ?
-                                <div className='AI-chat bg-[#444654] p-6 flex justify-center items-center'>
+
+                                <div key={index + 1} className='AI-chat bg-[#444654] p-6 flex justify-center items-center'>
                                     <div className='Content-chat flex items-start gap-4 w-full max-w-[450px] md:max-w-[768px]'>
                                         <div className="flex items-center">
                                             <img className="w-8 h-8 mr-2 md:mr-4" src={Logo_AI} alt="Avatar" />
                                         </div>
                                         <div className='w-full max-w-[450px] pt-1 md:max-w-[768px]'>
                                             <span className='text-white'>
-                                                {item.message}
+                                                {item.phanHoi === 1 ? 'Tích cực' : item.phanHoi === 0 ? 'Tiêu cực' : '...Đang suy nghĩ'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                :
-                                null
+                            </>
+                        )
+                    })}
 
-                    ))}
                     {/* <div className='Human-chat p-6 flex justify-center items-center'>
                         <div className='Content-chat flex items-start flex-row-reverse gap-4 w-full max-w-[450px] md:max-w-[768px]'>
                             <div className="flex items-center">
@@ -119,11 +137,12 @@ const Chat2Component = () => {
                             </div>
                             <div className='w-full max-w-[450px] pt-1 md:max-w-[768px] text-right'>
                                 <span className='text-white'>
-                                    Mỗi đoạn văn thường bắt đầu bằng một câu chủ đề hoặc một ý chính, từ đó phát triển và mở rộng ý kiến, thông tin hoặc quan điểm của tác giả. Các câu trong đoạn văn liên kết với nhau thông qua những từ nối, ví dụ như "thêm vào đó", "tuy nhiên", "do đó", để tạo sự mạch lạc và logic cho nội dung
+                                    adad
                                 </span>
                             </div>
                         </div>
                     </div>
+
                     <div className='AI-chat bg-[#444654] p-6 flex justify-center items-center'>
                         <div className='Content-chat flex items-start gap-4 w-full max-w-[450px] md:max-w-[768px]'>
                             <div className="flex items-center">
@@ -131,23 +150,26 @@ const Chat2Component = () => {
                             </div>
                             <div className='w-full max-w-[450px] pt-1 md:max-w-[768px]'>
                                 <span className='text-white'>
-                                    Mỗi đoạn văn thường bắt đầu bằng một câu chủ đề hoặc một ý chính, từ đó phát triển và mở rộng ý kiến, thông tin hoặc quan điểm của tác giả. Các câu trong đoạn văn liên kết với nhau thông qua những từ nối, ví dụ như "thêm vào đó", "tuy nhiên", "do đó", để tạo sự mạch lạc và logic cho nội dung
+                                    adad
                                 </span>
                             </div>
                         </div>
                     </div> */}
+
                 </div>
                 <div className='grid grid-cols-[minmax(auto,450px)] md:grid-cols-[minmax(auto,768px)] p-4'>
                     <div className="bg-[#343541] flex w-full justify-center items-center">
-                        <div className="Promt-chat bg-[#40414E] rounded-[26px] p-2 w-full flex items-end justify-between">
+                        <form onSubmit={handleSubmit(onSubmit)} className="Promt-chat bg-[#40414E] rounded-[26px] p-2 w-full flex items-end justify-between">
                             <div className="flex items-center">
                                 <img className="w-8 h-8 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
                             </div>
-                            <div className='w-full mb-1 flex items-center max-h-[25dvh] overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
+                            <div className='w-full mb-1 flex items-center max-h-[15dvh] overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
                                 <textarea
                                     className="w-full h-full px-2 bg-transparent placeholder-gray-400 outline-none text-white resize-none"
                                     placeholder="Enter a prompt here"
                                     rows={1}
+                                    maxLength={255}
+                                    {...register('content')}
                                     onInput={(e) => {
                                         const target = e.target as HTMLTextAreaElement;
                                         target.style.height = "auto";
@@ -156,11 +178,11 @@ const Chat2Component = () => {
                                 />
                             </div>
                             <div className='flex items-center pr-2 mb-1'>
-                                <div className="text-white rounded-full border-none">
+                                <button type='submit' className="text-white rounded-full border-none" title='send'>
                                     <SendHorizonal size={24} />
-                                </div>
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
