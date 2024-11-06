@@ -1,16 +1,12 @@
 import { useState } from "react";
 import logoGG from "../../../../assets/img/logoGG.png";
 import logo from "../../../../assets/img/z5970140768137_a1360e9972a044aa177375a7791443dc.jpg";
+import { useForm } from "react-hook-form";
 
 const LoginForm = () => {
   const [emailActive, setEmailActive] = useState(false);
   const [passwordActive, setPasswordActive] = useState(false);
-
-  const handleEmailChange = (e: any) => {
-    setEmailActive(
-      e.target.value !== "" || e.target === document.activeElement
-    );
-  };
+  const {register, handleSubmit,formState: { errors }, } = useForm();
 
   const handleEmailFocus = () => {
     setEmailActive(true);
@@ -19,18 +15,18 @@ const LoginForm = () => {
   const handleEmailBlur = (e: any) => {
     setEmailActive(e.target.value !== "");
   };
-
-  const handlePasswordChange = (e: any) => {
-    setPasswordActive(
-      e.target.value !== "" || e.target === document.activeElement
-    );
-  };
   const handlePasswordFocus = () => {
     setPasswordActive(true);
   };
 
   const handlePasswordBlur = (e: any) => {
     setPasswordActive(e.target.value !== "");
+  };
+
+  
+
+  const onSubmit = (data: any) => {
+    console.log("Dữ liệu đăng nhập:", data);
   };
 
   return (
@@ -50,47 +46,58 @@ const LoginForm = () => {
           Login
         </h2>
 
-        <form className="space-y-4 sm:space-y-6">
+        <form
+          className="space-y-4 sm:space-y-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="relative">
             <input
               type="email"
               id="email"
-              required
-              onChange={handleEmailChange}
+              {...register("email", { required: "Email là bắt buộc" })}
               onFocus={handleEmailFocus}
               onBlur={handleEmailBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${emailActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
+                emailActive || errors.email
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-                }`}
+              }`}
             >
               Email address
             </label>
+            {errors.email?.message &&
+              typeof errors.email.message === "string" && (
+                <p className="text-red-500 text-xs mt-2">{errors.email.message}</p>
+              )}
           </div>
 
           <div className="relative mt-4">
             <input
               type="password"
               id="password"
-              required
-              onChange={handlePasswordChange}
+              {...register("password", { required: "Password là bắt buộc" })}
               onFocus={handlePasswordFocus}
               onBlur={handlePasswordBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="password"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${passwordActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
+                passwordActive || errors.password
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-                }`}
+              }`}
             >
               Password
             </label>
+            {errors.password?.message &&
+              typeof errors.password.message === "string" && (
+                <p className="text-red-500 text-xs mt-2">{errors.password.message}</p>
+              )}
           </div>
 
           <button
@@ -114,7 +121,7 @@ const LoginForm = () => {
           <div className="w-full h-px bg-gray-400"></div>
         </div>
 
-        <button className="flex items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 hover:bg-gray-200">
+        <button className="flex items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 ">
           <img src={logoGG} alt="Google logo" className="w-5 h-5 mr-2" />
           Continue with Google
         </button>

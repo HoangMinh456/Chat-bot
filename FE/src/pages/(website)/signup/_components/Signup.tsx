@@ -1,17 +1,12 @@
 import { useState } from "react";
 import logoGG from "../../../../assets/img/logoGG.png";
 import logo from "../../../../assets/img/z5970140768137_a1360e9972a044aa177375a7791443dc.jpg";
+import { useForm } from "react-hook-form";
 
 const SignupForm = () => {
   const [usernameActive, setUsernameActive] = useState(false);
   const [emailActive, setEmailActive] = useState(false);
   const [passwordActive, setPasswordActive] = useState(false);
-
-  const handleUsernameChange = (e: any) => {
-    setUsernameActive(
-      e.target.value !== "" || e.target === document.activeElement
-    );
-  };
 
   const handleUsernameFocus = () => {
     setUsernameActive(true);
@@ -19,12 +14,6 @@ const SignupForm = () => {
 
   const handleUsernameBlur = (e: any) => {
     setUsernameActive(e.target.value !== "");
-  };
-
-  const handleEmailChange = (e: any) => {
-    setEmailActive(
-      e.target.value !== "" || e.target === document.activeElement
-    );
   };
 
   const handleEmailFocus = () => {
@@ -35,17 +24,22 @@ const SignupForm = () => {
     setEmailActive(e.target.value !== "");
   };
 
-  const handlePasswordChange = (e: any) => {
-    setPasswordActive(
-      e.target.value !== "" || e.target === document.activeElement
-    );
-  };
   const handlePasswordFocus = () => {
     setPasswordActive(true);
   };
 
   const handlePasswordBlur = (e: any) => {
     setPasswordActive(e.target.value !== "");
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data: any) => {
+    console.log("Dữ liệu đăng nhập:", data);
   };
 
   return (
@@ -63,67 +57,89 @@ const SignupForm = () => {
         <h2 className="text-2xl sm:text-3xl font-semibold text-center text-gray-800">
           Signup
         </h2>
-        <form className="space-y-4 sm:space-y-6">
+        <form
+          className="space-y-4 sm:space-y-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="relative">
             <input
               type="text"
               id="username"
-              required
-              onChange={handleUsernameChange}
+              {...register("username", { required: "User Name là bắt buộc" })}
               onFocus={handleUsernameFocus}
               onBlur={handleUsernameBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="username"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${usernameActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
+                usernameActive || errors.username
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-                }`}
+              }`}
             >
-              Username
+              User Name
             </label>
+            {errors.username?.message &&
+              typeof errors.username.message === "string" && (
+                <p className="text-red-500 text-xs mt-2">
+                  {errors.username.message}
+                </p>
+              )}
           </div>
+
           <div className="relative">
             <input
               type="email"
               id="email"
-              required
-              onChange={handleEmailChange}
+              {...register("email", { required: "Email là bắt buộc" })}
               onFocus={handleEmailFocus}
               onBlur={handleEmailBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${emailActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
+                emailActive || errors.email
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-                }`}
+              }`}
             >
               Email address
             </label>
+            {errors.email?.message &&
+              typeof errors.email.message === "string" && (
+                <p className="text-red-500 text-xs mt-2">
+                  {errors.email.message}
+                </p>
+              )}
           </div>
 
           <div className="relative mt-4">
             <input
               type="password"
               id="password"
-              required
-              onChange={handlePasswordChange}
+              {...register("password", { required: "Password là bắt buộc" })}
               onFocus={handlePasswordFocus}
               onBlur={handlePasswordBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="password"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${passwordActive
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
+                passwordActive || errors.password
                   ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
                   : "top-4 text-sm text-gray-500"
-                }`}
+              }`}
             >
               Password
             </label>
+            {errors.password?.message &&
+              typeof errors.password.message === "string" && (
+                <p className="text-red-500 text-xs mt-2">
+                  {errors.password.message}
+                </p>
+              )}
           </div>
 
           <button
@@ -147,7 +163,7 @@ const SignupForm = () => {
           <div className="w-full h-px bg-gray-400"></div>
         </div>
 
-        <button className="flex items-center justify-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 hover:bg-gray-200">
+        <button className="flex items-center justify-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100">
           <img src={logoGG} alt="Google logo" className="w-6 h-6 mr-2" />
           Continue with Google
         </button>
