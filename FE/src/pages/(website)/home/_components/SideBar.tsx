@@ -33,7 +33,7 @@ const SideBar = () => {
         }
     })
 
-    console.log('data side bar', data)
+    // console.log('data side bar', data)
 
     const changeTieuDe = useMutation({
         mutationFn: async (item: any) => {

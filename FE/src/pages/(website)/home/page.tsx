@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 const Home = () => {
     const { openMenu, setOpenMenu }: any = useContext(AppContext)
+
     const closeMenu = () => {
         if (openMenu === 'open') {
             setOpenMenu('close')
@@ -31,8 +32,21 @@ const Home = () => {
             }
         }
 
+        //
+        const handleResize = () => {
+            const screenWidth = window.innerWidth;
+
+            if (screenWidth > 768) {
+                const screen = document.querySelector('#Screen');
+                screen?.classList.remove('blur-sm');
+                setOpenMenu('close')
+            }
+        };
+        window.addEventListener("resize", handleResize);
+
         return () => {
             screen?.removeEventListener('click', closeMenu)
+            window.removeEventListener("resize", handleResize)
         };
 
     }, [openMenu])
