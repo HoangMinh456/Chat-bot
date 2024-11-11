@@ -163,7 +163,7 @@ const SignupForm = () => {
           <div className="w-full h-px bg-gray-400"></div>
         </div>
 
-        <button className="flex items-center justify-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100">
+        <button className="flex items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100">
           <img src={logoGG} alt="Google logo" className="w-6 h-6 mr-2" />
           Continue with Google
         </button>
