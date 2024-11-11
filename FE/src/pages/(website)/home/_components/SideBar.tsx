@@ -9,33 +9,53 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { AppContext } from '@/components/contexts/AppContext'
 import { useForm } from 'react-hook-form'
+import React from 'react'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import { useToast } from '@/hooks/use-toast'
 
 
 const SideBar = () => {
-    const { openMenu, handleOpenMenu }: any = useContext(AppContext)
+    const { openMenu, handleOpenMenu, getLocalStorage }: any = useContext(AppContext)
     const [openForm, setOpenForm] = useState('')
     const { register, handleSubmit } = useForm()
     const queryClient = useQueryClient();
     const naviagte = useNavigate();
+    const user = getLocalStorage('user')
+    const { toast } = useToast()
+    const orderedKeys = ['today', 'last_3_days', 'last_7_days', 'older_than_7_days'];
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['GET_CHAT_SIDE_BAR'],
         queryFn: async () => {
-            const { data } = await axios.get('http://127.0.0.1:5000/chatbox/all?user_id=1');
+            const { data } = await axios.get(`http://127.0.0.1:5000/chatbox/all?user_id=${user.user_id}`);
             // return data.messages((a: any, b: any) => new Date(b.thoiGianTao).getTime() - new Date(a.thoiGianTao).getTime());
             return data;
         }
     })
 
-    console.log('dataSideBar', data)
+    console.log('data side bar', data)
 
     const changeTieuDe = useMutation({
         mutationFn: async (item: any) => {
-            // console.log("item", item)
             const { data } = await axios.put(`http://127.0.0.1:5000/chatbox/update/name?chatbot_id=${item.id_chatBot}`, { tieuDe: item.tieuDe });
             return data
         }, onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['GET_CHAT_SIDE_BAR'] })
+            toast({
+                title: 'Chat-bot',
+                description: 'Thay đổi tiêu đề thành công!'
+            })
+        }, onError: (error) => {
+            if (axios.isAxiosError(error) && error.response) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Chat-bot',
+                    description: error.response.data.message
+                })
+            } else {
+                alert('error!')
+                console.log(error.message);
+            }
         }
     })
 
@@ -47,35 +67,35 @@ const SideBar = () => {
         }, onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['GET_CHAT_SIDE_BAR'] })
             naviagte('/')
+            toast({
+                title: 'Chat-bot',
+                description: 'Xóa thành công!'
+            })
+        }, onError: (error) => {
+            if (axios.isAxiosError(error) && error.response) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Chat-bot',
+                    description: error.response.data.message
+                })
+            } else {
+                alert('error!')
+                console.log(error.message);
+            }
         }
     })
 
     const onSubmit = async (data: any) => {
-        // console.log(data)
         changeTieuDe.mutateAsync({ id_chatBot: openForm, tieuDe: data.content })
         setOpenForm('')
     }
 
-    // console.log(data)
-
-    // function showDay(date: string) {
-    //     const toDay = new Date();
-    //     const day = new Date(date);
-    //     const diffInMs = toDay.getTime() - day.getTime();
-
-    //     const oneDay = 86400000; // 1 ngày 
-    //     const oneMonth = 30 * oneDay; // 1 tháng (30 ngày)
-    //     const daysPassed = Math.floor(diffInMs / oneDay); // Số ngày đã qua
-    //     const monthsPassed = Math.floor(diffInMs / oneMonth); // Số tháng đã qua
-
-    //     if (daysPassed < 1) return 'Hôm nay';
-    //     if (daysPassed < 30) return `${daysPassed} ngày trước`;
-    //     if (monthsPassed === 1) return '1 tháng trước';
-    //     if (monthsPassed === 2) return '2 tháng trước';
-    //     if (monthsPassed === 3) return '3 tháng trước';
-
-    //     return 'Hơn 3 tháng trước';
-    // }
+    function showDay(date: any) {
+        if (date === 'today') return 'Hôm nay';
+        if (date === 'last_3_days') return '3 ngày trước';
+        if (date === 'last_7_days') return '7 ngày trước';
+        if (date === 'older_than_7_days') return 'Hơn 7 ngày trước';
+    }
 
 
     if (isLoading) return <div className='bg-[#202123] h-screen'>Loading...</div>
@@ -92,56 +112,67 @@ const SideBar = () => {
                 <Link to={`/`}>
                     <div className='New-chat flex gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer md:text-[16px] text-[12px]'>
                         <div>
-                            <img className='max-sm:w-2' src={Icon_Plus} alt="icon-plus" />
+                            <img className='max-sm:w-4' src={Icon_Plus} alt="icon-plus" />
                         </div>
                         <span className='truncate text-[12px] md:text-[16px]'>New chat</span>
                     </div>
                 </Link>
                 <div className='flex flex-col gap-y-4'>
-                    <span className='px-4 text-sm'>Hôm nay</span>
-                    {data.messages.map((item: any) => {
-                        return (
-                            <div key={item.id_chatBot} className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                                {openForm !== item.id_chatBot
-                                    ?
-                                    <div className='flex gap-4'>
-                                        <img className='max-sm:w-2' src={Message} alt="" />
-                                        <Link className='truncate flex-grow w-full' to={`/chat/${item.id_chatBot}`}>
-                                            <span className='text-[12px] md:text-[16px]'>{item.tieuDe}</span>
-                                        </Link>
-                                        <img onClick={() => setOpenForm(item.id_chatBot)} className='max-sm:w-2' src={Pen} alt="" />
-                                        <img onClick={() => deleteChatBot.mutateAsync({ id: item.id_chatBot })} className='max-sm:w-2' src={Delete} alt="" />
-                                    </div>
-                                    :
-                                    <form onSubmit={handleSubmit(onSubmit)} className='flex gap-4'>
-                                        <img className='max-sm:w-2' src={Message} alt="" />
-                                        <div className='truncate flex-grow'>
-                                            <input {...register('content')} defaultValue={'New chat'} className='bg-[#444654] border-[#444654]' type="text" placeholder="Enter text" />
-                                        </div>
-                                        <button type='submit' title='send'>
-                                            <Check />
-                                        </button>
-                                        <X onClick={() => setOpenForm('')} />
-                                    </form>
-                                }
-                            </div>
-                        )
-                    })}
 
+                    {orderedKeys.map((key) => {
+                        const value = data[key];
+                        if (value && value.length > 0) {
+                            return (
+                                <React.Fragment key={key}>
+                                    <span className='px-4 text-sm'>{showDay(key)}</span>
+                                    {value.map((item: any) => (
+                                        <div key={item.id_chatBot} className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
+                                            {openForm !== item.id_chatBot ? (
+                                                <div className='flex gap-4'>
+                                                    <img className='max-sm:w-4' src={Message} alt="" />
+                                                    <Link className='truncate flex-grow w-full' to={`/chat/${item.id_chatBot}`}>
+                                                        <span className='text-[12px] md:text-[16px]'>{item.tieuDe}</span>
+                                                    </Link>
+                                                    <img onClick={() => setOpenForm(item.id_chatBot)} className='max-sm:w-4' src={Pen} alt="pen_icons" />
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger>
+                                                            <img className='w-7 max-sm:w-8' src={Delete} alt="delete_icon" />
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>Bạn có chắc muốn xóa chứ?</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Hành động không thể hoàn tác, mọi dư liệu sẽ bị xóa vĩnh viễn.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                <AlertDialogAction className='bg-red-500 hover:bg-red-600' onClick={() => deleteChatBot.mutateAsync({ id: item.id_chatBot })}>Delete</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                            ) : (
+                                                <form onSubmit={handleSubmit(onSubmit)} className='flex gap-4'>
+                                                    <img className='max-sm:w-4' src={Message} alt="" />
+                                                    <div className='truncate flex-grow'>
+                                                        <input {...register('content')} defaultValue={'New chat'} className='bg-[#444654] border-[#444654]' type="text" placeholder="Enter text" />
+                                                    </div>
+                                                    <button type='submit' title='send'>
+                                                        <Check />
+                                                    </button>
+                                                    <X onClick={() => setOpenForm('')} />
+                                                </form>
+                                            )}
+                                        </div>
+                                    ))}
+                                </React.Fragment>
+                            );
+                        } else {
+                            return null;
+                        }
+                    })}
                 </div>
-                {/* <div className='flex flex-col gap-y-4'>
-                    <span className='px-4 text-sm'>Hôm nay</span>
-                    <Link to={`/chat/`}>
-                        <div className='gap-x-4 p-4 items-center border border-[#444654] rounded-md hover:bg-[#343540] cursor-pointer'>
-                            <div className='flex gap-4'>
-                                <img className='max-sm:w-2' src={Message} alt="" />
-                                <span className='truncate flex-grow text-[12px] md:text-[16px]'></span>
-                                <img className='max-sm:w-2' src={Pen} alt="" />
-                                <img className='max-sm:w-2' src={Delete} alt="" />
-                            </div>
-                        </div>
-                    </Link>
-                </div> */}
             </div>
         </div >
     )

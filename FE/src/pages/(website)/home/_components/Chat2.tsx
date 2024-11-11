@@ -5,15 +5,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Menu } from 'lucide-react';
 import { SendHorizonal } from 'lucide-react';
-import { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import Account from './Account';
 
 const Chat2Component = () => {
     const { openMenu, setOpenMenu, handleOpenMenu }: any = useContext(AppContext)
     const { id } = useParams()
     const { register, handleSubmit, reset } = useForm()
     const queryClient = useQueryClient()
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+
     const { data, isLoading, isError } = useQuery({
         queryKey: ['GET_CHAT_BOT', id],
         queryFn: async () => {
@@ -46,6 +49,15 @@ const Chat2Component = () => {
             setOpenMenu('close')
         }
     }
+
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: "smooth"
+            });
+        }
+    }, [data?.messages]);
 
     useEffect(() => {
         const screen = document.querySelector('#Screen')
@@ -86,21 +98,15 @@ const Chat2Component = () => {
                 <div className='max-md:absolute top-1/2 left-1/2 transform max-md:-translate-x-1/2 max-md:-translate-y-1/2'>
                     <span>Chat-bot</span>
                 </div>
-                <div className="flex items-center justify-end">
-                    <img className="w-8 h-8 md:w-12 md:h-12 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
-                    {/* <span className="text-sm md:text-base font-bold text-white">User 1</span> */}
-                </div>
+                <Account />
             </div>
 
             {/* Message List */}
             <div className="flex flex-col items-center justify-between h-screen overflow-hidden">
-                {/* <div className="text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-orange-500 p-3 rounded-lg text-4xl lg:text-8xl text-center">
-                    Chào bạn, bạn muốn có cuộc trò chuyện gì?
-                </div> */}
-                <div className='Main-chat relative grid gap-y-6 w-full overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
+                <div ref={chatContainerRef} className='Main-chat relative grid gap-y-6 w-full overflow-y-auto scrollbar scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-[#585969] scrollbar-track-[#40414E]'>
                     {data.messages.map((item: any, index: number) => {
                         return (
-                            <>
+                            <React.Fragment key={index}>
                                 <div key={index} className='Human-chat p-6 flex justify-center items-center'>
                                     <div className='Content-chat flex items-start flex-row-reverse gap-4 w-full max-w-[450px] md:max-w-[768px]'>
                                         <div className="flex items-center">
@@ -121,40 +127,14 @@ const Chat2Component = () => {
                                         </div>
                                         <div className='w-full max-w-[450px] pt-1 md:max-w-[768px]'>
                                             <span className='text-white'>
-                                                {item.phanHoi === 1 ? 'Tích cực' : item.phanHoi === 0 ? 'Tiêu cực' : '...Đang suy nghĩ'}
+                                                {item.phanHoi === 1 ? 'Tích cực' : item.phanHoi === 0 ? 'Tiêu cực' : item.phanHoi === 2 ? 'Trung tính' : item.phanHoi === 3 ? 'Negative' : item.phanHoi === 4 ? 'Positive' : '...Đang suy nghĩ'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                            </>
+                            </React.Fragment>
                         )
                     })}
-
-                    {/* <div className='Human-chat p-6 flex justify-center items-center'>
-                        <div className='Content-chat flex items-start flex-row-reverse gap-4 w-full max-w-[450px] md:max-w-[768px]'>
-                            <div className="flex items-center">
-                                <img className="w-8 h-8 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
-                            </div>
-                            <div className='w-full max-w-[450px] pt-1 md:max-w-[768px] text-right'>
-                                <span className='text-white'>
-                                    adad
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='AI-chat bg-[#444654] p-6 flex justify-center items-center'>
-                        <div className='Content-chat flex items-start gap-4 w-full max-w-[450px] md:max-w-[768px]'>
-                            <div className="flex items-center">
-                                <img className="w-8 h-8 mr-2 md:mr-4" src={Logo_AI} alt="Avatar" />
-                            </div>
-                            <div className='w-full max-w-[450px] pt-1 md:max-w-[768px]'>
-                                <span className='text-white'>
-                                    adad
-                                </span>
-                            </div>
-                        </div>
-                    </div> */}
 
                 </div>
                 <div className='grid grid-cols-[minmax(auto,450px)] md:grid-cols-[minmax(auto,768px)] p-4'>
@@ -174,6 +154,12 @@ const Chat2Component = () => {
                                         const target = e.target as HTMLTextAreaElement;
                                         target.style.height = "auto";
                                         target.style.height = `${target.scrollHeight}px`;
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            document.querySelector('form')?.requestSubmit();
+                                        }
                                     }}
                                 />
                             </div>

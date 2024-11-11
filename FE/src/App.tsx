@@ -1,5 +1,6 @@
 import "./App.css";
 import { AppProvider } from "./components/contexts/AppContext";
+import { Toaster } from "./components/ui/toaster";
 import Router from "./routes";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <>
       <AppProvider>
         <Router />
+        <Toaster />
       </AppProvider>
     </>
   );

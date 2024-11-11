@@ -5,13 +5,14 @@ import LoginPage from "@/pages/(website)/login/page";
 import SignupPage from "@/pages/(website)/signup/page";
 import { Route, Routes } from "react-router-dom";
 import Chat from "@/pages/(website)/home/_components/Chat";
+import Provider from "./Provider";
 
 const Router = () => {
   return (
     <>
       <Routes>
         <Route path="/" element={<LayoutWebsite />}>
-          <Route path="/" element={<Home />} >
+          <Route path="/" element={<Provider><Home /></Provider>} >
             <Route index element={<Chat />} />
             <Route path="chat/:id" element={<Chat2Component />} />
           </Route>

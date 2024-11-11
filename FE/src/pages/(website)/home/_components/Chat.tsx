@@ -8,12 +8,14 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Account from './Account';
 
 const Chat = () => {
-    const { openMenu, handleOpenMenu }: any = useContext(AppContext)
+    const { openMenu, handleOpenMenu, getLocalStorage }: any = useContext(AppContext)
     const { register, handleSubmit } = useForm()
     const queryClient = useQueryClient();
     const navigate = useNavigate()
+    const user = getLocalStorage('user')
 
     const createChatBot = useMutation({
         mutationFn: async (item: any) => {
@@ -40,10 +42,12 @@ const Chat = () => {
     const onSubmit = async (data: any) => {
         if (!data.content || data.content.trim() === '') return
 
-        let chatBot = await createChatBot.mutateAsync({ name: data.content.slice(0, 10) })
+        let chatBot = await createChatBot.mutateAsync({ name: data.content.slice(0, 10), userid: user.user_id })
 
         await createMessChat.mutateAsync({ content: data.content, id_chatBot: chatBot.chatbox })
     }
+
+
 
     return (
         <div id='Screen' className="h-screen bg-[#343541] flex flex-col">
@@ -55,10 +59,7 @@ const Chat = () => {
                 <div className='max-md:absolute top-1/2 left-1/2 transform max-md:-translate-x-1/2 max-md:-translate-y-1/2'>
                     <span>Chat-bot</span>
                 </div>
-                <div className="flex items-center justify-end">
-                    <img className="w-8 h-8 md:w-12 md:h-12 rounded-full mr-2 md:mr-4" src={avatar} alt="Avatar" />
-                    {/* <span className="text-sm md:text-base font-bold text-white">User 1</span> */}
-                </div>
+                <Account />
             </div>
 
             {/* Message List */}
@@ -85,6 +86,12 @@ const Chat = () => {
                                         const target = e.target as HTMLTextAreaElement;
                                         target.style.height = "auto";
                                         target.style.height = `${target.scrollHeight}px`;
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            document.querySelector('form')?.requestSubmit();
+                                        }
                                     }}
                                 />
                             </div>

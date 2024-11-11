@@ -2,11 +2,18 @@ import { useState } from "react";
 import logoGG from "../../../../assets/img/logoGG.png";
 import logo from "../../../../assets/img/z5970140768137_a1360e9972a044aa177375a7791443dc.jpg";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+
 
 const SignupForm = () => {
   const [usernameActive, setUsernameActive] = useState(false);
   const [emailActive, setEmailActive] = useState(false);
   const [passwordActive, setPasswordActive] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast()
 
   const handleUsernameFocus = () => {
     setUsernameActive(true);
@@ -38,8 +45,41 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm();
 
+  const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const createAccount = useMutation({
+    mutationFn: async (item: any) => {
+      const { data } = await axios.post(`http://127.0.0.1:5000/signup`, item);
+      return data;
+    }, onSuccess: () => {
+      navigate('/login');
+      toast({
+        title: 'Signup',
+        description: 'Đăng ký thành công!'
+      })
+    }, onError: (error) => {
+      if (axios.isAxiosError(error) && error.response) {
+        toast({
+          variant: 'destructive',
+          title: 'Signup',
+          description: error.response.data.message
+        })
+      } else {
+        alert('error!')
+        console.log(error.message);
+      }
+    }
+  })
+
   const onSubmit = (data: any) => {
-    console.log("Dữ liệu đăng nhập:", data);
+    const item = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      sdt: '',
+    }
+    createAccount.mutateAsync(item);
   };
 
   return (
@@ -65,45 +105,42 @@ const SignupForm = () => {
             <input
               type="text"
               id="username"
-              {...register("username", { required: "User Name là bắt buộc" })}
+              {...register("username", { required: "User Name là bắt buộc", minLength: { value: 6, message: "User Name phải có ít nhất 6 ký tự" } })}
               onFocus={handleUsernameFocus}
               onBlur={handleUsernameBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="username"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                usernameActive || errors.username
-                  ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
-                  : "top-4 text-sm text-gray-500"
-              }`}
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${usernameActive || errors.username
+                ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
+                : "top-4 text-sm text-gray-500"
+                }`}
             >
               User Name
             </label>
-            {errors.username?.message &&
-              typeof errors.username.message === "string" && (
-                <p className="text-red-500 text-xs mt-2">
-                  {errors.username.message}
-                </p>
-              )}
+            {(errors.username?.type === "minLength" || errors.username?.type === "required") && typeof errors.username.message === "string" && (
+              <p className="text-red-500 text-xs mt-2">
+                {errors.username.message}
+              </p>
+            )}
           </div>
 
           <div className="relative">
             <input
               type="email"
               id="email"
-              {...register("email", { required: "Email là bắt buộc" })}
+              {...register("email", { required: "Email là bắt buộc", validate: value => emailPattern.test(value) || "Email không hợp lệ" })}
               onFocus={handleEmailFocus}
               onBlur={handleEmailBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                emailActive || errors.email
-                  ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
-                  : "top-4 text-sm text-gray-500"
-              }`}
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${emailActive || errors.email
+                ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
+                : "top-4 text-sm text-gray-500"
+                }`}
             >
               Email address
             </label>
@@ -119,18 +156,17 @@ const SignupForm = () => {
             <input
               type="password"
               id="password"
-              {...register("password", { required: "Password là bắt buộc" })}
+              {...register("password", { required: "Password là bắt buộc", validate: value => passwordPattern.test(value) || "Password phải dài ít nhất 8 ký tự và bao gồm chữ cái, số, và ký tự đặc biệt" })}
               onFocus={handlePasswordFocus}
               onBlur={handlePasswordBlur}
               className="peer w-full px-3 pt-4 pb-2 text-gray-900 border border-emerald-600 rounded-md focus:outline-none focus:ring-0 focus:border-emerald-600"
             />
             <label
               htmlFor="password"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                passwordActive || errors.password
-                  ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
-                  : "top-4 text-sm text-gray-500"
-              }`}
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${passwordActive || errors.password
+                ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
+                : "top-4 text-sm text-gray-500"
+                }`}
             >
               Password
             </label>
@@ -152,7 +188,7 @@ const SignupForm = () => {
 
         <p className="text-center text-gray-600">
           You already have an account?{" "}
-          <a href="/login" className="text-emerald-600 hover:text-emerald-800">
+          <a href="/login" className="text-emerald-600 hover:text-emerald-800 underline">
             Login
           </a>
         </p>

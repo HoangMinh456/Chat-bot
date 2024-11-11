@@ -2,11 +2,17 @@ import { useState } from "react";
 import logoGG from "../../../../assets/img/logoGG.png";
 import logo from "../../../../assets/img/z5970140768137_a1360e9972a044aa177375a7791443dc.jpg";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginForm = () => {
   const [emailActive, setEmailActive] = useState(false);
   const [passwordActive, setPasswordActive] = useState(false);
-  const {register, handleSubmit,formState: { errors }, } = useForm();
+  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const navigate = useNavigate();
+  const { toast } = useToast()
 
   const handleEmailFocus = () => {
     setEmailActive(true);
@@ -23,10 +29,39 @@ const LoginForm = () => {
     setPasswordActive(e.target.value !== "");
   };
 
-  
+  const loginAccount = useMutation({
+    mutationFn: async (item: any) => {
+      const { data } = await axios.post(`http://127.0.0.1:5000/login`, item);
+      return data;
+    }, onSuccess: (data) => {
+      // console.log(data)
+      localStorage.setItem('user', JSON.stringify(data.data));
+      navigate('/');
+      toast({
+        title: 'Login',
+        description: 'Đăng nhập thành công!'
+      })
+    }, onError: (error) => {
+      if (axios.isAxiosError(error) && error.response) {
+        toast({
+          variant: 'destructive',
+          title: 'Login',
+          description: error.response.data.message
+        })
+      } else {
+        alert('error!')
+        console.log(error.message);
+      }
+    }
+  })
 
   const onSubmit = (data: any) => {
-    console.log("Dữ liệu đăng nhập:", data);
+    // console.log("Dữ liệu đăng nhập:", data);
+    const item = {
+      email: data.email,
+      password: data.password
+    }
+    loginAccount.mutateAsync(item);
   };
 
   return (
@@ -61,11 +96,10 @@ const LoginForm = () => {
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                emailActive || errors.email
-                  ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
-                  : "top-4 text-sm text-gray-500"
-              }`}
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${emailActive || errors.email
+                ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
+                : "top-4 text-sm text-gray-500"
+                }`}
             >
               Email address
             </label>
@@ -86,11 +120,10 @@ const LoginForm = () => {
             />
             <label
               htmlFor="password"
-              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${
-                passwordActive || errors.password
-                  ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
-                  : "top-4 text-sm text-gray-500"
-              }`}
+              className={`absolute left-3 bg-white px-1 transition-all duration-200 ${passwordActive || errors.password
+                ? "top-0 text-xs text-emerald-600 -translate-y-1/2"
+                : "top-4 text-sm text-gray-500"
+                }`}
             >
               Password
             </label>
@@ -110,7 +143,7 @@ const LoginForm = () => {
 
         <p className="text-center text-gray-600">
           Don’t have an account?{" "}
-          <a href="signup" className="text-emerald-600 hover:underline">
+          <a href="signup" className="text-emerald-600 underline">
             Sign up
           </a>
         </p>
@@ -121,7 +154,7 @@ const LoginForm = () => {
           <div className="w-full h-px bg-gray-400"></div>
         </div>
 
-        <button className="flex items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 ">
+        <button className="flex items-center justify-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 ">
           <img src={logoGG} alt="Google logo" className="w-5 h-5 mr-2" />
           Continue with Google
         </button>
